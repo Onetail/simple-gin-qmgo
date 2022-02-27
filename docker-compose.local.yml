@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  user-service-mongo:
+    container_name: user-service-mongo
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+      - MONGO_INITDB_DATABASE=admin
+    ports:
+      - 27018:27017
+    volumes:
+      - ./data/mongo:/data/db
+      - ./data/mongo-dump:/dump
+    networks:
+      - user-service
+
+networks:
+  user-service:
+    driver: bridge

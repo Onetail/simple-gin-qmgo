@@ -1,0 +1,16 @@
+syntax = "proto3";
+package proto;
+option go_package="/proto";
+
+service ServiceServer {
+    rpc GetUserList (GetUserListQuery) returns (GetUserListResponse) {}
+}
+
+message GetUserListQuery {
+    int32 page = 1;
+    int32 size = 2;
+}
+
+message GetUserListResponse {
+    string return = 1;
+}

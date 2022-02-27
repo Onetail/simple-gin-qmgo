@@ -1,0 +1,14 @@
+[http_server]
+host = "0.0.0.0"
+port = 7011
+
+[database]
+host = "localhost"
+port = 27018
+user = "root"
+password = "root"
+dbtype = "mongodb"
+dbname = "userService"
+
+[token_manager]
+secret = "IJUSTHOPEWECANTOGETHER"
