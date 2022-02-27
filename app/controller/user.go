@@ -9,7 +9,7 @@ import (
 	model "simple-gin-api/app/model"
 
 	"github.com/gin-gonic/gin"
-	"gopkg.in/mgo.v2/bson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type User struct {
@@ -37,7 +37,7 @@ func (u *User) GetAllUser(c *gin.Context) {
 	}
 
 	users := model.Users{}
-	err = db.C(UserCollection).Find(bson.M{}).All(&users)
+	err = db.Find(c, bson.M{}).All(&users)
 
 	if err != nil {
 		c.JSON(200, gin.H{
@@ -68,7 +68,7 @@ func (u *User) GetUser(c *gin.Context) {
 	}
 
 	user := model.User{}
-	err = db.C(UserCollection).Find(bson.M{"id": &idParse}).One(&user)
+	err = db.Find(c, bson.M{"id": &idParse}).One(&user)
 
 	if err != nil {
 		c.JSON(200, gin.H{
@@ -102,7 +102,7 @@ func (u *User) CreateUser(c *gin.Context) {
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
 
-	err = db.C(UserCollection).Insert(user)
+	_, err = db.InsertOne(c, user)
 
 	if err != nil {
 		c.JSON(200, gin.H{
@@ -146,7 +146,7 @@ func (u *User) UpdateUser(c *gin.Context) {
 	user.ID = idParse
 	user.UpdatedAt = time.Now()
 
-	err = db.C(UserCollection).Update(bson.M{"id": &idParse}, user)
+	err = db.UpdateOne(c, bson.M{"id": &idParse}, user)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"message": "Error Update User",
@@ -176,7 +176,7 @@ func (u *User) DeleteUser(c *gin.Context) {
 		return
 	}
 
-	err = db.C(UserCollection).Remove(bson.M{"id": &idParse})
+	err = db.Remove(c, bson.M{"id": &idParse})
 	if err != nil {
 		c.JSON(200, gin.H{
 			"message": "Error Delete User",

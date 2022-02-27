@@ -3,16 +3,17 @@ package app
 import (
 	"fmt"
 
+	"context"
+
+	"github.com/qiniu/qmgo"
 	"github.com/spf13/viper"
-	"gopkg.in/mgo.v2"
 )
 
 type Database struct {
 	app *App
 }
 
-func (database *Database) Init() (*mgo.Database, error) {
-
+func (database *Database) Init() (*qmgo.QmgoClient, error) {
 	host := viper.GetString("database.host")
 	port := viper.GetString("database.port")
 	user := viper.GetString("database.user")
@@ -21,13 +22,11 @@ func (database *Database) Init() (*mgo.Database, error) {
 	dbname := viper.GetString("database.dbname")
 
 	fmt.Println(dbtype + "://" + user + ":" + password + "@" + host + ":" + port)
-	session, err := mgo.Dial(dbtype + "://" + user + ":" + password + "@" + host + ":" + port + "/" + dbname + "?authSource=admin")
+	ctx := context.Background()
+	cli, err := qmgo.Open(ctx, &qmgo.Config{Uri: dbtype + "://" + user + ":" + password + "@" + host + ":" + port, Database: dbname, Coll: "user"})
 	if err != nil {
-		fmt.Print(err)
-		panic(err)
-		// return nil, err
+		return nil, err
 	}
 
-	db := session.DB(dbname)
-	return db, nil
+	return cli, nil
 }
